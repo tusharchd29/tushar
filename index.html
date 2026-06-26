@@ -7,31 +7,46 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-    html, body { width:100%; height:100%; overflow:hidden; font-family:'Inter',sans-serif; background:#000; }
-
-    .bg {
-      position:fixed; inset:0; z-index:0;
-      background: url('https://raw.githubusercontent.com/tusharchd29/tushar/main/bg.png') center center / cover no-repeat;
+    html, body {
+      width:100%; height:100%;
+      overflow:hidden;
+      font-family:'Inter',sans-serif;
+      background:#000;
     }
+
+    /* Full screen image - no cropping */
+    .bg {
+      position:fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      z-index:0;
+    }
+    .bg img {
+      width:100%; height:100%;
+      object-fit:cover;
+      object-position:center top;
+      display:block;
+    }
+
     .bg-overlay {
       position:fixed; inset:0; z-index:1;
       background: linear-gradient(
         to bottom,
-        rgba(0,0,0,0.05) 0%,
-        rgba(0,0,0,0.0)  40%,
-        rgba(0,0,0,0.3)  70%,
-        rgba(0,0,0,0.96) 100%
+        rgba(0,0,0,0.0)  0%,
+        rgba(0,0,0,0.0)  50%,
+        rgba(0,0,0,0.55) 75%,
+        rgba(0,0,0,0.95) 100%
       );
     }
 
     /* Bottom panel */
     .bottom {
       position:fixed; bottom:0; left:0; right:0; z-index:10;
-      padding:0 24px 36px;
+      padding:0 24px 44px;
     }
 
-    .song-title  { font-size:28px; font-weight:700; color:#fff; letter-spacing:-0.5px; margin-bottom:5px; }
-    .song-row    { display:flex; align-items:center; gap:10px; margin-bottom:20px; }
+    .song-title { font-size:28px; font-weight:700; color:#fff; letter-spacing:-0.5px; margin-bottom:6px; }
+    .song-row   { display:flex; align-items:center; gap:10px; margin-bottom:18px; }
     .avatar {
       width:30px; height:30px; border-radius:50%;
       background:linear-gradient(135deg,#ff6b6b,#ffa500);
@@ -43,7 +58,7 @@
     /* Progress */
     .prog-track {
       width:100%; height:3px;
-      background:rgba(255,255,255,0.25);
+      background:rgba(255,255,255,0.3);
       border-radius:99px; position:relative;
       cursor:pointer; touch-action:none; margin-bottom:6px;
     }
@@ -56,24 +71,23 @@
       width:13px; height:13px; border-radius:50%; background:#fff;
       position:absolute; top:50%; transform:translate(-50%,-50%);
       left:0%; pointer-events:none;
-      box-shadow:0 0 6px rgba(255,255,255,0.8);
+      box-shadow:0 0 6px rgba(255,255,255,0.9);
     }
     .prog-times {
       display:flex; justify-content:space-between;
-      font-size:11px; color:rgba(255,255,255,0.5); margin-bottom:18px;
+      font-size:11px; color:rgba(255,255,255,0.5); margin-bottom:20px;
     }
 
     /* Controls */
     .controls {
-      display:flex; align-items:center; justify-content:center;
-      gap:36px; margin-bottom:18px;
+      display:flex; align-items:center; justify-content:center; gap:36px;
     }
     .btn-skip {
       background:none; border:none; cursor:pointer;
-      color:rgba(255,255,255,0.8); padding:6px;
+      color:rgba(255,255,255,0.85); padding:6px;
       -webkit-tap-highlight-color:transparent;
     }
-    .btn-skip:active { opacity:0.5; }
+    .btn-skip:active { opacity:0.4; }
     .btn-play {
       width:70px; height:70px; border-radius:50%; border:none;
       background:#fff; cursor:pointer;
@@ -83,15 +97,13 @@
       -webkit-tap-highlight-color:transparent;
     }
     .btn-play:active { transform:scale(0.9); }
-
-    /* Volume */
-    .vol-row { display:flex; align-items:center; gap:10px; }
-    .vol-icon { font-size:13px; color:rgba(255,255,255,0.4); }
   </style>
 </head>
 <body>
 
-<div class="bg"></div>
+<div class="bg">
+  <img src="https://raw.githubusercontent.com/tusharchd29/tushar/main/bg.png" alt=""/>
+</div>
 <div class="bg-overlay"></div>
 
 <div class="bottom">
@@ -125,15 +137,6 @@
       <svg width="30" height="30" viewBox="0 0 24 24" fill="white"><polygon points="5,4 15,12 5,20"/><line x1="19" y1="4" x2="19" y2="20" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
     </button>
   </div>
-
-  <div class="vol-row">
-    <span class="vol-icon">🔈</span>
-    <div class="prog-track" id="volTrack" style="flex:1;margin-bottom:0">
-      <div class="prog-fill"  id="volFill"  style="width:90%"></div>
-      <div class="prog-thumb" id="volThumb" style="left:90%"></div>
-    </div>
-    <span class="vol-icon">🔊</span>
-  </div>
 </div>
 
 <audio id="audio"
@@ -144,13 +147,10 @@
 const audio     = document.getElementById('audio');
 const seekFill  = document.getElementById('seekFill');
 const seekThumb = document.getElementById('seekThumb');
-const volFill   = document.getElementById('volFill');
-const volThumb  = document.getElementById('volThumb');
 const curEl     = document.getElementById('cur');
 const durEl     = document.getElementById('dur');
 const iPlay     = document.getElementById('ico-play');
 const iPause    = document.getElementById('ico-pause');
-audio.volume    = 0.9;
 
 function fmt(s) { s=Math.max(0,s||0); return String(Math.floor(s/60)).padStart(2,'0')+':'+String(Math.floor(s%60)).padStart(2,'0'); }
 function setBar(f,th,pct) { f.style.width=pct+'%'; th.style.left=pct+'%'; }
@@ -158,8 +158,8 @@ function setBar(f,th,pct) { f.style.width=pct+'%'; th.style.left=pct+'%'; }
 audio.addEventListener('loadedmetadata', () => durEl.textContent=fmt(audio.duration));
 audio.addEventListener('timeupdate', () => {
   if (!audio.duration) return;
-  setBar(seekFill,seekThumb,(audio.currentTime/audio.duration)*100);
-  curEl.textContent=fmt(audio.currentTime);
+  setBar(seekFill, seekThumb, (audio.currentTime/audio.duration)*100);
+  curEl.textContent = fmt(audio.currentTime);
 });
 audio.addEventListener('ended', () => {
   iPlay.style.display=''; iPause.style.display='none';
@@ -170,7 +170,6 @@ function togglePlay() {
   if (audio.paused) { audio.play(); iPlay.style.display='none'; iPause.style.display=''; }
   else              { audio.pause(); iPlay.style.display=''; iPause.style.display='none'; }
 }
-
 function skip(s) { audio.currentTime=Math.max(0,Math.min(audio.duration||0,audio.currentTime+s)); }
 
 function makeDraggable(el,cb) {
@@ -187,9 +186,6 @@ function makeDraggable(el,cb) {
 
 makeDraggable(document.getElementById('seekTrack'),p=>{
   if(audio.duration){audio.currentTime=p*audio.duration;setBar(seekFill,seekThumb,p*100);}
-});
-makeDraggable(document.getElementById('volTrack'),p=>{
-  audio.volume=p;setBar(volFill,volThumb,p*100);
 });
 </script>
 </body>
