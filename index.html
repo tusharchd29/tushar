@@ -2,188 +2,325 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
   <title>Faded · Tushar</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-    body {
-      min-height: 100vh;
-      display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(160deg, #0d0d1a 0%, #111827 60%, #0d1a2e 100%);
+    html, body {
+      width:100%; height:100%;
+      overflow: hidden;
       font-family: 'Inter', sans-serif;
-      padding: 24px;
+      background: #000;
     }
 
-    .card {
-      width: 100%; max-width: 360px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 32px;
-      padding: 36px 28px 28px;
-      text-align: center;
-      box-shadow: 0 32px 80px rgba(0,0,0,0.6);
-      backdrop-filter: blur(20px);
+    /* ── Full screen background ── */
+    .bg {
+      position: fixed; inset: 0;
+      background: linear-gradient(160deg, #0a0020 0%, #1a0050 30%, #0d1a6e 60%, #000428 100%);
+      z-index: 0;
     }
 
-    /* Header */
-    .cover {
-      width: 90px; height: 90px; border-radius: 50%;
-      background: linear-gradient(135deg, #7b5af5, #e855a0);
+    /* Animated orbs */
+    .orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(80px); opacity: 0.5;
+      animation: orbFloat 8s ease-in-out infinite;
+    }
+    .orb1 { width:300px; height:300px; background:#7b2fff; top:-80px; left:-60px; animation-delay:0s; }
+    .orb2 { width:250px; height:250px; background:#e855a0; bottom:100px; right:-80px; animation-delay:-3s; }
+    .orb3 { width:200px; height:200px; background:#2255ff; top:40%; left:50%; animation-delay:-5s; }
+    @keyframes orbFloat {
+      0%,100% { transform: translateY(0) scale(1); }
+      50%      { transform: translateY(-30px) scale(1.08); }
+    }
+
+    /* Dancer figure - CSS art */
+    .dancer-wrap {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 65vh;
       display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 18px;
-      font-size: 36px;
-      box-shadow: 0 0 40px rgba(123,90,245,0.4);
-      animation: pulse 3s ease-in-out infinite;
+      z-index: 1;
     }
-    @keyframes pulse {
-      0%,100% { box-shadow: 0 0 30px rgba(123,90,245,0.4); }
-      50%      { box-shadow: 0 0 55px rgba(232,85,160,0.6); }
+    .dancer {
+      width: 180px; height: 380px;
+      position: relative;
+      filter: drop-shadow(0 0 30px rgba(100,200,255,0.8));
+      animation: dancerPulse 3s ease-in-out infinite;
     }
-    h1 { color: #fff; font-size: 22px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 4px; }
-    .artist { color: rgba(255,255,255,0.4); font-size: 13px; font-weight: 400; margin-bottom: 24px; }
+    @keyframes dancerPulse {
+      0%,100% { transform: scale(1) rotate(-1deg); filter: drop-shadow(0 0 25px rgba(100,200,255,0.7)); }
+      50%      { transform: scale(1.04) rotate(1deg); filter: drop-shadow(0 0 45px rgba(100,200,255,1)); }
+    }
+    .dancer svg { width:100%; height:100%; }
+
+    /* Heartbeat line */
+    .heartbeat {
+      position: fixed;
+      bottom: 38vh;
+      left: 0; right: 0;
+      height: 60px;
+      z-index: 2;
+      overflow: hidden;
+    }
+    .heartbeat svg {
+      width: 200%; height: 100%;
+      animation: hbScroll 2s linear infinite;
+    }
+    @keyframes hbScroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ── Bottom panel ── */
+    .bottom {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 10;
+      padding: 0 24px 36px;
+      background: linear-gradient(to top, rgba(0,0,0,0.92) 60%, transparent);
+    }
 
     /* Lyrics */
-    .lyrics-outer {
-      position: relative; margin-bottom: 24px;
-      border-radius: 16px;
+    .lyrics-wrap {
+      position: relative;
+      height: 80px;
+      margin-bottom: 12px;
       overflow: hidden;
-      background: rgba(0,0,0,0.2);
-      border: 1px solid rgba(255,255,255,0.06);
     }
-    .lyrics-outer::before, .lyrics-outer::after {
-      content: ''; position: absolute; left: 0; right: 0; height: 32px; z-index: 2; pointer-events: none;
+    .lyrics-wrap::before, .lyrics-wrap::after {
+      content:''; position:absolute; left:0; right:0; height:24px; z-index:2; pointer-events:none;
     }
-    .lyrics-outer::before { top: 0;    background: linear-gradient(to bottom, rgba(10,10,20,0.95), transparent); }
-    .lyrics-outer::after  { bottom: 0; background: linear-gradient(to top,   rgba(10,10,20,0.95), transparent); }
-
+    .lyrics-wrap::before { top:0;    background: linear-gradient(to bottom, rgba(0,0,0,0.85), transparent); }
+    .lyrics-wrap::after  { bottom:0; background: linear-gradient(to top,   rgba(0,0,0,0.85), transparent); }
     .lyrics-box {
-      height: 140px;
-      overflow-y: scroll; overflow-x: hidden;
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
+      height: 100%; overflow-y: scroll; overflow-x: hidden;
+      scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
-      padding: 0 16px;
     }
-    .lyrics-box::-webkit-scrollbar { display: none; }
-
+    .lyrics-box::-webkit-scrollbar { display:none; }
     .lyric-line {
-      font-size: 13px;
-      font-weight: 400;
-      line-height: 2;
-      color: rgba(255,255,255,0.2);
-      transition: color 0.4s ease, font-size 0.3s ease, font-weight 0.3s ease;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      font-size: 13px; font-weight: 400; line-height: 2;
+      color: rgba(255,255,255,0.25); text-align: left;
+      transition: color 0.35s, font-size 0.3s, font-weight 0.3s;
     }
-    .lyric-line.near-prev { color: rgba(255,255,255,0.4); }
-    .lyric-line.near-next { color: rgba(255,255,255,0.35); }
-    .lyric-line.active {
-      color: #ffffff;
-      font-size: 15px;
-      font-weight: 600;
+    .lyric-line.near   { color: rgba(255,255,255,0.5); }
+    .lyric-line.active { color: #fff; font-size: 15px; font-weight: 600; }
+
+    /* Song info */
+    .song-info {
+      margin-bottom: 16px;
     }
-
-    /* Play button */
-    .controls { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 24px; }
-
-    .btn-play {
-      width: 64px; height: 64px; border-radius: 50%; border: none;
+    .song-title  { font-size: 26px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
+    .song-artist {
+      font-size: 14px; color: rgba(255,255,255,0.55);
+      display: flex; align-items: center; gap: 8px; margin-top: 4px;
+    }
+    .avatar {
+      width: 26px; height: 26px; border-radius: 50%;
       background: linear-gradient(135deg, #7b5af5, #e855a0);
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 30px rgba(123,90,245,0.5);
-      transition: transform 0.15s, box-shadow 0.15s;
-      -webkit-tap-highlight-color: transparent;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #fff;
     }
-    .btn-play:active { transform: scale(0.92); box-shadow: 0 0 15px rgba(123,90,245,0.3); }
 
     /* Progress */
-    .progress-section { margin-bottom: 6px; }
-    .slider-track {
-      width: 100%; height: 5px;
-      background: rgba(255,255,255,0.1);
+    .progress-wrap { margin-bottom: 6px; }
+    .prog-track {
+      width: 100%; height: 3px;
+      background: rgba(255,255,255,0.2);
       border-radius: 99px; position: relative;
       cursor: pointer; touch-action: none;
     }
-    .slider-fill {
+    .prog-fill {
       height: 100%; width: 0%;
-      background: linear-gradient(90deg, #7b5af5, #e855a0);
+      background: #fff;
       border-radius: 99px; pointer-events: none;
     }
-    .slider-thumb {
-      width: 16px; height: 16px; border-radius: 50%;
+    .prog-thumb {
+      width: 12px; height: 12px; border-radius: 50%;
       background: #fff;
-      box-shadow: 0 0 8px rgba(123,90,245,0.8);
       position: absolute; top: 50%; transform: translate(-50%, -50%);
       left: 0%; pointer-events: none;
-      transition: transform 0.1s;
     }
-    .slider-track:active .slider-thumb { transform: translate(-50%, -50%) scale(1.3); }
-
-    .times {
+    .prog-times {
       display: flex; justify-content: space-between;
-      font-size: 11px; font-weight: 500;
-      color: rgba(255,255,255,0.25); margin-top: 6px;
+      font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 6px;
     }
+
+    /* Controls */
+    .controls {
+      display: flex; align-items: center; justify-content: center;
+      gap: 32px; margin-top: 18px;
+    }
+    .btn-skip {
+      background: none; border: none; cursor: pointer;
+      color: rgba(255,255,255,0.7); padding: 8px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-skip:active { opacity: 0.5; }
+    .btn-play {
+      width: 72px; height: 72px; border-radius: 50%; border: none;
+      background: #fff;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 30px rgba(255,255,255,0.3);
+      transition: transform 0.12s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-play:active { transform: scale(0.91); }
 
     /* Volume */
-    .vol-section {
-      display: flex; align-items: center; gap: 10px; margin-top: 16px;
+    .vol-row {
+      display: flex; align-items: center; gap: 10px; margin-top: 14px;
     }
-    .vol-icon { font-size: 14px; color: rgba(255,255,255,0.3); flex-shrink: 0; }
+    .vol-icon { font-size: 14px; color: rgba(255,255,255,0.35); }
 
-    /* Status */
-    .status {
-      font-size: 11px; font-weight: 500;
-      color: rgba(255,255,255,0.3);
-      margin-top: 14px; letter-spacing: 0.05em;
-      text-transform: uppercase; min-height: 16px;
+    /* Side actions */
+    .side-actions {
+      position: fixed; right: 16px; bottom: 42vh;
+      z-index: 10;
+      display: flex; flex-direction: column; gap: 20px; align-items: center;
     }
-    .status.playing { color: #a78bfa; }
+    .action-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      background: rgba(255,255,255,0.1);
+      border: none; border-radius: 50%; width: 48px; height: 48px;
+      justify-content: center; cursor: pointer; color: #fff;
+      -webkit-tap-highlight-color: transparent;
+      backdrop-filter: blur(8px);
+    }
+    .action-btn span { font-size: 9px; color: rgba(255,255,255,0.6); margin-top: 2px; }
   </style>
 </head>
 <body>
-<div class="card">
-  <div class="cover">🎵</div>
-  <h1>Faded</h1>
-  <div class="artist">Tushar</div>
 
-  <div class="lyrics-outer">
+<!-- Background -->
+<div class="bg">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<!-- Dancer -->
+<div class="dancer-wrap">
+  <div class="dancer">
+    <svg viewBox="0 0 120 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#7fffff"/>
+          <stop offset="100%" stop-color="#60a0ff"/>
+        </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <g fill="url(#g1)" filter="url(#glow)" opacity="0.9">
+        <!-- Head -->
+        <circle cx="60" cy="22" r="14"/>
+        <!-- Neck -->
+        <rect x="56" y="34" width="8" height="10" rx="4"/>
+        <!-- Body -->
+        <path d="M38 46 Q60 42 82 46 L78 100 Q60 106 42 100 Z"/>
+        <!-- Left arm raised -->
+        <path d="M42 52 Q28 40 18 20 Q16 14 20 12 Q24 10 26 16 Q32 30 46 48" stroke="url(#g1)" stroke-width="8" stroke-linecap="round" fill="none"/>
+        <!-- Right arm out -->
+        <path d="M78 52 Q95 60 108 50 Q114 46 112 52 Q110 56 100 60 Q88 66 76 58" stroke="url(#g1)" stroke-width="8" stroke-linecap="round" fill="none"/>
+        <!-- Left leg -->
+        <path d="M50 100 Q44 130 50 155 Q54 168 46 188 Q42 196 48 198 Q54 200 58 192 Q68 172 62 152 Q58 132 60 104" stroke="url(#g1)" stroke-width="9" stroke-linecap="round" fill="none"/>
+        <!-- Right leg raised/bent -->
+        <path d="M68 102 Q76 118 80 130 Q86 148 96 158 Q102 164 98 170 Q94 176 88 170 Q78 160 72 144 Q66 126 60 106" stroke="url(#g1)" stroke-width="9" stroke-linecap="round" fill="none"/>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<!-- Heartbeat line -->
+<div class="heartbeat">
+  <svg viewBox="0 0 800 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,30 L60,30 L80,10 L100,50 L120,5 L140,55 L160,30 L200,30 L260,30 L280,10 L300,50 L320,5 L340,55 L360,30 L400,30 L460,30 L480,10 L500,50 L520,5 L540,55 L560,30 L600,30 L660,30 L680,10 L700,50 L720,5 L740,55 L760,30 L800,30"
+      fill="none" stroke="url(#hbg)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <defs>
+      <linearGradient id="hbg" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#7b5af5" stop-opacity="0"/>
+        <stop offset="30%" stop-color="#e855a0"/>
+        <stop offset="70%" stop-color="#7b5af5"/>
+        <stop offset="100%" stop-color="#e855a0" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+  </svg>
+</div>
+
+<!-- Side actions -->
+<div class="side-actions">
+  <button class="action-btn" onclick="toggleLike(this)">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+  </button>
+  <button class="action-btn" onclick="shareLink()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+  </button>
+</div>
+
+<!-- Bottom panel -->
+<div class="bottom">
+
+  <!-- Lyrics -->
+  <div class="lyrics-wrap">
     <div class="lyrics-box" id="lyricsBox">
-      <div style="height:56px"></div>
-      <!-- lyrics injected here -->
-      <div style="height:56px"></div>
+      <div style="height:30px"></div>
+      <div style="height:30px"></div>
     </div>
   </div>
 
+  <!-- Song info -->
+  <div class="song-info">
+    <div class="song-title">Faded</div>
+    <div class="song-artist">
+      <div class="avatar">T</div>
+      Tushar Singla
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="prog-track" id="seekTrack">
+      <div class="prog-fill"  id="seekFill"></div>
+      <div class="prog-thumb" id="seekThumb"></div>
+    </div>
+    <div class="prog-times">
+      <span id="cur">0:00</span>
+      <span id="dur">3:38</span>
+    </div>
+  </div>
+
+  <!-- Controls -->
   <div class="controls">
+    <button class="btn-skip" onclick="skip(-10)">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="19,20 9,12 19,4"/><line x1="5" y1="4" x2="5" y2="20" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
+    </button>
     <button class="btn-play" onclick="togglePlay()">
-      <svg id="ico-play" width="24" height="24" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>
-      <svg id="ico-pause" width="24" height="24" viewBox="0 0 24 24" fill="white" style="display:none">
+      <svg id="ico-play" width="28" height="28" viewBox="0 0 24 24" fill="#111"><polygon points="6,3 20,12 6,21"/></svg>
+      <svg id="ico-pause" width="28" height="28" viewBox="0 0 24 24" fill="#111" style="display:none">
         <rect x="5" y="3" width="4" height="18" rx="1"/>
         <rect x="15" y="3" width="4" height="18" rx="1"/>
       </svg>
     </button>
+    <button class="btn-skip" onclick="skip(10)">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="5,4 15,12 5,20"/><line x1="19" y1="4" x2="19" y2="20" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
+    </button>
   </div>
 
-  <div class="progress-section">
-    <div class="slider-track" id="seekTrack">
-      <div class="slider-fill"  id="seekFill"></div>
-      <div class="slider-thumb" id="seekThumb"></div>
-    </div>
-    <div class="times"><span id="cur">0:00</span><span id="dur">--:--</span></div>
-  </div>
-
-  <div class="vol-section">
+  <!-- Volume -->
+  <div class="vol-row">
     <span class="vol-icon">🔈</span>
-    <div class="slider-track" id="volTrack" style="flex:1">
-      <div class="slider-fill"  id="volFill"  style="width:90%"></div>
-      <div class="slider-thumb" id="volThumb" style="left:90%"></div>
+    <div class="prog-track" id="volTrack" style="flex:1">
+      <div class="prog-fill"  id="volFill"  style="width:90%"></div>
+      <div class="prog-thumb" id="volThumb" style="left:90%"></div>
     </div>
     <span class="vol-icon">🔊</span>
   </div>
 
-  <div class="status" id="status">Tap to play</div>
 </div>
 
 <audio id="audio"
@@ -191,7 +328,6 @@
   preload="auto"></audio>
 
 <script>
-// ── Lyrics (your timestamps) ─────────────────────────────────
 const lyrics = [
   { t:   0, text: "♪" },
   { t:  16, text: "The city sleeps," },
@@ -233,7 +369,6 @@ const lyrics = [
   { t: 204, text: "And I'm lost inside your name." },
 ];
 
-// Build DOM
 const box    = document.getElementById('lyricsBox');
 const padBot = box.children[1];
 const els    = [];
@@ -245,13 +380,10 @@ lyrics.forEach(l => {
   els.push(d);
 });
 
-// Manual scroll pause
 let userScrolling = false, scrollTimer = null, autoScrolling = false;
 box.addEventListener('touchstart', () => { userScrolling = true; clearTimeout(scrollTimer); }, { passive: true });
 box.addEventListener('touchend',   () => { scrollTimer = setTimeout(() => userScrolling = false, 3000); }, { passive: true });
-box.addEventListener('scroll',     () => {
-  if (!autoScrolling) { userScrolling = true; clearTimeout(scrollTimer); scrollTimer = setTimeout(() => userScrolling = false, 3000); }
-});
+box.addEventListener('scroll',     () => { if (!autoScrolling) { userScrolling = true; clearTimeout(scrollTimer); scrollTimer = setTimeout(() => userScrolling = false, 3000); }});
 
 let lastIdx = -1;
 function updateLyrics(t) {
@@ -260,13 +392,12 @@ function updateLyrics(t) {
   if (idx === lastIdx) return;
   lastIdx = idx;
   els.forEach((el, i) => {
-    el.classList.remove('active', 'near-prev', 'near-next');
-    if (i === idx)     el.classList.add('active');
-    else if (i === idx - 1) el.classList.add('near-prev');
-    else if (i === idx + 1) el.classList.add('near-next');
+    el.classList.remove('active', 'near');
+    if (i === idx) el.classList.add('active');
+    else if (Math.abs(i - idx) <= 1) el.classList.add('near');
   });
   if (!userScrolling) {
-    const el  = els[idx];
+    const el = els[idx];
     const target = el.offsetTop - (box.clientHeight / 2) + (el.offsetHeight / 2);
     autoScrolling = true;
     box.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
@@ -274,7 +405,6 @@ function updateLyrics(t) {
   }
 }
 
-// ── Audio ──────────────────────────────────────────────────────
 const audio     = document.getElementById('audio');
 const seekFill  = document.getElementById('seekFill');
 const seekThumb = document.getElementById('seekThumb');
@@ -282,7 +412,6 @@ const volFill   = document.getElementById('volFill');
 const volThumb  = document.getElementById('volThumb');
 const curEl     = document.getElementById('cur');
 const durEl     = document.getElementById('dur');
-const status    = document.getElementById('status');
 const iPlay     = document.getElementById('ico-play');
 const iPause    = document.getElementById('ico-pause');
 audio.volume    = 0.9;
@@ -299,7 +428,6 @@ audio.addEventListener('timeupdate', () => {
 });
 audio.addEventListener('ended', () => {
   iPlay.style.display = ''; iPause.style.display = 'none';
-  status.textContent = 'Finished ✓'; status.className = 'status';
   setBar(seekFill, seekThumb, 0); curEl.textContent = '0:00';
   lastIdx = -1; box.scrollTo({ top: 0, behavior: 'smooth' });
 });
@@ -308,15 +436,29 @@ function togglePlay() {
   if (audio.paused) {
     audio.play();
     iPlay.style.display = 'none'; iPause.style.display = '';
-    status.textContent = 'Now playing'; status.className = 'status playing';
   } else {
     audio.pause();
     iPlay.style.display = ''; iPause.style.display = 'none';
-    status.textContent = 'Paused'; status.className = 'status';
   }
 }
 
-// ── Drag helper ────────────────────────────────────────────────
+function skip(s) {
+  audio.currentTime = Math.max(0, Math.min(audio.duration || 0, audio.currentTime + s));
+}
+
+function toggleLike(btn) {
+  btn.style.color = btn.style.color === 'rgb(232, 85, 160)' ? '' : '#e855a0';
+}
+
+function shareLink() {
+  if (navigator.share) {
+    navigator.share({ title: 'Faded by Tushar', url: window.location.href });
+  } else {
+    navigator.clipboard.writeText(window.location.href);
+    alert('Link copied!');
+  }
+}
+
 function makeDraggable(el, cb) {
   const getX = e => e.touches ? e.touches[0].clientX : e.clientX;
   const calc = e => { const r = el.getBoundingClientRect(); return Math.max(0, Math.min(1, (getX(e) - r.left) / r.width)); };
