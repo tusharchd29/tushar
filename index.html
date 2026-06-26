@@ -4,174 +4,240 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Faded · Tushar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      min-height: 97vh;
-      display:flex; align-items:center; justify-content:center;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      font-family: 'Segoe UI', sans-serif;
-      padding: 20px;
-    }
-    .card {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 28px;
-      padding: 32px 28px 24px;
-      text-align: center;
-      width: 100%;
-      max-width: 340px;
-      backdrop-filter: blur(16px);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-    }
-    .note-icon { font-size:44px; margin-bottom:10px; display:block; animation: float 3s ease-in-out infinite; }
-    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
-    h1 { color:#fff; font-size:21px; font-weight: 697; margin-bottom:3px; }
-    .artist { color:rgba(255,255,255,0.4); font-size:13px; margin-bottom:18px; }
 
-    .lyrics-outer { position:relative; margin-bottom:18px; }
-    .lyrics-outer::before, .lyrics-outer::after {
-      content:''; position:absolute; left: 0; right: 0; height: 25px; z-index:2; pointer-events:none;
+    body {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(160deg, #0d0d1a 0%, #111827 60%, #0d1a2e 100%);
+      font-family: 'Inter', sans-serif;
+      padding: 24px;
     }
-    .lyrics-outer::before { top:0; background:linear-gradient(to bottom,rgba(18,22,46,0.95),transparent); }
-    .lyrics-outer::after  { bottom:0; background:linear-gradient(to top,rgba(18,22,46,0.95),transparent); }
+
+    .card {
+      width: 100%; max-width: 360px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 32px;
+      padding: 36px 28px 28px;
+      text-align: center;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+      backdrop-filter: blur(20px);
+    }
+
+    /* Header */
+    .cover {
+      width: 90px; height: 90px; border-radius: 50%;
+      background: linear-gradient(135deg, #7b5af5, #e855a0);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 18px;
+      font-size: 36px;
+      box-shadow: 0 0 40px rgba(123,90,245,0.4);
+      animation: pulse 3s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 30px rgba(123,90,245,0.4); }
+      50%      { box-shadow: 0 0 55px rgba(232,85,160,0.6); }
+    }
+    h1 { color: #fff; font-size: 22px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 4px; }
+    .artist { color: rgba(255,255,255,0.4); font-size: 13px; font-weight: 400; margin-bottom: 24px; }
+
+    /* Lyrics */
+    .lyrics-outer {
+      position: relative; margin-bottom: 24px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .lyrics-outer::before, .lyrics-outer::after {
+      content: ''; position: absolute; left: 0; right: 0; height: 32px; z-index: 2; pointer-events: none;
+    }
+    .lyrics-outer::before { top: 0;    background: linear-gradient(to bottom, rgba(10,10,20,0.95), transparent); }
+    .lyrics-outer::after  { bottom: 0; background: linear-gradient(to top,   rgba(10,10,20,0.95), transparent); }
 
     .lyrics-box {
-      height: 127px; overflow-y:scroll; overflow-x:hidden;
-      scroll-behavior:smooth; -webkit-overflow-scrolling:touch;
-      scrollbar-width:none;
+      height: 140px;
+      overflow-y: scroll; overflow-x: hidden;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 0 16px;
     }
-    .lyrics-box::-webkit-scrollbar { display:none; }
+    .lyrics-box::-webkit-scrollbar { display: none; }
 
     .lyric-line {
-      font-size:13px; line-height: 0; padding:3px 4px;
-      color:rgba(255,255,255,0.22);
-      transition:color 0.35s, font-size 0.35s, font-weight 0.35s;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 2;
+      color: rgba(255,255,255,0.2);
+      transition: color 0.4s ease, font-size 0.3s ease, font-weight 0.3s ease;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .lyric-line.near  { color:rgba(255,255,255,0.5); }
-    .lyric-line.active { color:#fff; font-size:15px; font-weight: 697; }
+    .lyric-line.near-prev { color: rgba(255,255,255,0.4); }
+    .lyric-line.near-next { color: rgba(255,255,255,0.35); }
+    .lyric-line.active {
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    /* Play button */
+    .controls { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 24px; }
 
     .btn-play {
-      width:64px; height: 61px; border-radius:50%; border:none;
-      background:linear-gradient(135deg,#7b5af5,#e855a0);
-      cursor:pointer; display:inline-flex; align-items:center; justify-content:center;
-      box-shadow:0 0 28px rgba(123,90,245,0.5);
-      transition:transform 0.12s; margin-bottom:22px;
-      -webkit-tap-highlight-color:transparent;
+      width: 64px; height: 64px; border-radius: 50%; border: none;
+      background: linear-gradient(135deg, #7b5af5, #e855a0);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 30px rgba(123,90,245,0.5);
+      transition: transform 0.15s, box-shadow 0.15s;
+      -webkit-tap-highlight-color: transparent;
     }
-    .btn-play:active { transform:scale(0.91); }
+    .btn-play:active { transform: scale(0.92); box-shadow: 0 0 15px rgba(123,90,245,0.3); }
 
-    .seek-wrap { margin-bottom:6px; }
-    .bar-row {
-      width:100%; height: 7px;
-      background:rgba(255,255,255,0.12);
-      border-radius:99px; position:relative; cursor:pointer; touch-action:none;
+    /* Progress */
+    .progress-section { margin-bottom: 6px; }
+    .slider-track {
+      width: 100%; height: 5px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 99px; position: relative;
+      cursor: pointer; touch-action: none;
     }
-    .bar-fill {
-      height: 97%; width:0%;
-      background:linear-gradient(90deg,#7b5af5,#e855a0);
-      border-radius:99px; pointer-events:none;
+    .slider-fill {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, #7b5af5, #e855a0);
+      border-radius: 99px; pointer-events: none;
     }
-    .bar-thumb {
-      width:20px; height: 17px; border-radius:50%; background:#fff;
-      box-shadow:0 0 8px rgba(123,90,245,0.9);
-      position:absolute; top:50%; transform:translate(-50%,-50%);
-      left: 0%; pointer-events:none;
+    .slider-thumb {
+      width: 16px; height: 16px; border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 8px rgba(123,90,245,0.8);
+      position: absolute; top: 50%; transform: translate(-50%, -50%);
+      left: 0%; pointer-events: none;
+      transition: transform 0.1s;
     }
-    .times { display:flex; justify-content:space-between; font-size:11px; color:rgba(255,255,255,0.28); margin-top:5px; }
-    .vol-wrap { display:flex; align-items:center; gap:10px; margin-top:14px; }
-    .vol-icon { color:rgba(255,255,255,0.38); font-size:15px; flex-shrink:0; }
-    .status { font-size:12px; color:rgba(255,255,255,0.35); margin-top:12px; min-height: 13px; }
-    .status.playing { color:#a78bfa; }
+    .slider-track:active .slider-thumb { transform: translate(-50%, -50%) scale(1.3); }
+
+    .times {
+      display: flex; justify-content: space-between;
+      font-size: 11px; font-weight: 500;
+      color: rgba(255,255,255,0.25); margin-top: 6px;
+    }
+
+    /* Volume */
+    .vol-section {
+      display: flex; align-items: center; gap: 10px; margin-top: 16px;
+    }
+    .vol-icon { font-size: 14px; color: rgba(255,255,255,0.3); flex-shrink: 0; }
+
+    /* Status */
+    .status {
+      font-size: 11px; font-weight: 500;
+      color: rgba(255,255,255,0.3);
+      margin-top: 14px; letter-spacing: 0.05em;
+      text-transform: uppercase; min-height: 16px;
+    }
+    .status.playing { color: #a78bfa; }
   </style>
 </head>
 <body>
 <div class="card">
-  <span class="note-icon">🎵</span>
+  <div class="cover">🎵</div>
   <h1>Faded</h1>
   <div class="artist">Tushar</div>
 
   <div class="lyrics-outer">
     <div class="lyrics-box" id="lyricsBox">
-      <div style="height: 49px"></div>
-      <div style="height: 49px"></div>
+      <div style="height:56px"></div>
+      <!-- lyrics injected here -->
+      <div style="height:56px"></div>
     </div>
   </div>
 
-  <button class="btn-play" onclick="togglePlay()">
-    <svg id="ico-play" width="26" height="26" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>
-    <svg id="ico-pause" width="26" height="26" viewBox="0 0 24 24" fill="white" style="display:none"><rect x="5" y="3" width="5" height="18"/><rect x="14" y="3" width="5" height="18"/></svg>
-  </button>
+  <div class="controls">
+    <button class="btn-play" onclick="togglePlay()">
+      <svg id="ico-play" width="24" height="24" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>
+      <svg id="ico-pause" width="24" height="24" viewBox="0 0 24 24" fill="white" style="display:none">
+        <rect x="5" y="3" width="4" height="18" rx="1"/>
+        <rect x="15" y="3" width="4" height="18" rx="1"/>
+      </svg>
+    </button>
+  </div>
 
-  <div class="seek-wrap">
-    <div class="bar-row" id="seekTrack">
-      <div class="bar-fill" id="seekFill"></div>
-      <div class="bar-thumb" id="seekThumb"></div>
+  <div class="progress-section">
+    <div class="slider-track" id="seekTrack">
+      <div class="slider-fill"  id="seekFill"></div>
+      <div class="slider-thumb" id="seekThumb"></div>
     </div>
     <div class="times"><span id="cur">0:00</span><span id="dur">--:--</span></div>
   </div>
 
-  <div class="vol-wrap">
+  <div class="vol-section">
     <span class="vol-icon">🔈</span>
-    <div class="bar-row" id="volTrack">
-      <div class="bar-fill" id="volFill" style="width:90%"></div>
-      <div class="bar-thumb" id="volThumb" style="left: 87%"></div>
+    <div class="slider-track" id="volTrack" style="flex:1">
+      <div class="slider-fill"  id="volFill"  style="width:90%"></div>
+      <div class="slider-thumb" id="volThumb" style="left:90%"></div>
     </div>
     <span class="vol-icon">🔊</span>
   </div>
 
-  <div class="status" id="status">Tap play to start</div>
+  <div class="status" id="status">Tap to play</div>
 </div>
 
-<audio id="audio" src="https://raw.githubusercontent.com/tusharchd29/tushar/main/faded.mp3" preload="auto"></audio>
+<audio id="audio"
+  src="https://raw.githubusercontent.com/tusharchd29/tushar/main/faded.mp3"
+  preload="auto"></audio>
 
 <script>
+// ── Lyrics (your timestamps) ─────────────────────────────────
 const lyrics = [
-  { t: 0,    text: "♪ ♪ ♪" },
-  { t: 16,   text: "The city sleeps," },
-  { t: 16,   text: "but I'm still wide awake." },
-  { t: 21,   text: "Your shadow moves" },
-  { t: 24,   text: "through every thought I make." },
-  { t: 28,   text: "We were dancing under quiet skies." },
-  { t: 33,   text: "Fingers touched but hearts were blind." },
-  { t: 37,   text: "You said forever in your eyes, but" },
-  { t: 41,   text: "forever's just another lie." },
-  { t: 47,   text: "And I still hear your voice inside the" },
-  { t: 51,   text: "rain," },
-  { t: 54,   text: "calling me softly by my name." },
-  { t: 61,   text: "In these fading lights," },
-  { t: 65,   text: "you're still in my mind" },
-  { t: 69,   text: "like a ghost I can't erase in time." },
-  { t: 77,   text: "I keep reaching out," },
-  { t: 81,   text: "but you're not around." },
-  { t: 85,   text: "Just the echo of your love. So loud." },
-  { t: 108,   text: "The air still smells like your perfume" },
-  { t: 113,   text: "in this room that feels like doom. Every" },
-  { t: 117,   text: "song brings me to you." },
-  { t: 121,   text: "Every silence cuts me through." },
-  { t: 127,   text: "And I still hear your voice inside the" },
-  { t: 131,   text: "rain," },
-  { t: 134,   text: "calling me softly once again." },
-  { t: 141,   text: "In these fading lights," },
-  { t: 145,   text: "you're still in my mind." },
-  { t: 149,   text: "Like a ghost I can erase inside." },
-  { t: 157,   text: "Keep reaching out," },
-  { t: 161,   text: "but you're not around." },
-  { t: 165,   text: "Just the echo of your love. So" },
-  { t: 175,   text: "maybe love's not meant to stay." },
-  { t: 179,   text: "Maybe it just fades away." },
-  { t: 183,   text: "Like a dream that ends at dawn. Till I" },
-  { t: 187,   text: "wait though you're gone." },
-  { t: 197,   text: "The city sleeps," },
-  { t: 200,   text: "the night remains." },
-  { t: 204,   text: "And I'm lost inside your name." },
+  { t:   0, text: "♪" },
+  { t:  16, text: "The city sleeps," },
+  { t:  19, text: "but I'm still wide awake." },
+  { t:  24, text: "Your shadow moves" },
+  { t:  27, text: "through every thought I make." },
+  { t:  31, text: "We were dancing under quiet skies." },
+  { t:  36, text: "Fingers touched but hearts were blind." },
+  { t:  40, text: "You said forever in your eyes, but" },
+  { t:  44, text: "forever's just another lie." },
+  { t:  50, text: "And I still hear your voice inside the" },
+  { t:  54, text: "rain," },
+  { t:  57, text: "calling me softly by my name." },
+  { t:  64, text: "In these fading lights," },
+  { t:  68, text: "you're still in my mind" },
+  { t:  72, text: "like a ghost I can't erase in time." },
+  { t:  80, text: "I keep reaching out," },
+  { t:  84, text: "but you're not around." },
+  { t:  88, text: "Just the echo of your love. So loud." },
+  { t: 108, text: "The air still smells like your perfume" },
+  { t: 113, text: "in this room that feels like doom. Every" },
+  { t: 117, text: "song brings me to you." },
+  { t: 121, text: "Every silence cuts me through." },
+  { t: 127, text: "And I still hear your voice inside the" },
+  { t: 131, text: "rain," },
+  { t: 134, text: "calling me softly once again." },
+  { t: 141, text: "In these fading lights," },
+  { t: 145, text: "you're still in my mind." },
+  { t: 149, text: "Like a ghost I can erase inside." },
+  { t: 157, text: "Keep reaching out," },
+  { t: 161, text: "but you're not around." },
+  { t: 165, text: "Just the echo of your love. So" },
+  { t: 175, text: "maybe love's not meant to stay." },
+  { t: 179, text: "Maybe it just fades away." },
+  { t: 183, text: "Like a dream that ends at dawn. Till I" },
+  { t: 187, text: "wait though you're gone." },
+  { t: 197, text: "The city sleeps," },
+  { t: 200, text: "the night remains." },
+  { t: 204, text: "And I'm lost inside your name." },
 ];
 
-// Build lyric DOM
-const box = document.getElementById('lyricsBox');
+// Build DOM
+const box    = document.getElementById('lyricsBox');
 const padBot = box.children[1];
-const els = [];
-lyrics.forEach((l, i) => {
+const els    = [];
+lyrics.forEach(l => {
   const d = document.createElement('div');
   d.className = 'lyric-line';
   d.textContent = l.text;
@@ -179,36 +245,36 @@ lyrics.forEach((l, i) => {
   els.push(d);
 });
 
-// Manual scroll detection
+// Manual scroll pause
 let userScrolling = false, scrollTimer = null, autoScrolling = false;
-box.addEventListener('touchstart', () => { userScrolling=true; clearTimeout(scrollTimer); }, {passive:true});
-box.addEventListener('touchend',   () => { scrollTimer=setTimeout(()=>userScrolling=false, 3000); }, {passive:true});
-box.addEventListener('scroll',     () => { if(!autoScrolling){ userScrolling=true; clearTimeout(scrollTimer); scrollTimer=setTimeout(()=>userScrolling=false,3000); }});
+box.addEventListener('touchstart', () => { userScrolling = true; clearTimeout(scrollTimer); }, { passive: true });
+box.addEventListener('touchend',   () => { scrollTimer = setTimeout(() => userScrolling = false, 3000); }, { passive: true });
+box.addEventListener('scroll',     () => {
+  if (!autoScrolling) { userScrolling = true; clearTimeout(scrollTimer); scrollTimer = setTimeout(() => userScrolling = false, 3000); }
+});
 
 let lastIdx = -1;
 function updateLyrics(t) {
   let idx = 0;
-  for (let i = 0; i < lyrics.length; i++) {
-    if (t >= lyrics[i].t) idx = i;
-    else break;
-  }
+  for (let i = 0; i < lyrics.length; i++) { if (t >= lyrics[i].t) idx = i; else break; }
   if (idx === lastIdx) return;
   lastIdx = idx;
   els.forEach((el, i) => {
-    el.classList.remove('active','near');
-    if (i === idx) el.classList.add('active');
-    else if (Math.abs(i-idx) <= 1) el.classList.add('near');
+    el.classList.remove('active', 'near-prev', 'near-next');
+    if (i === idx)     el.classList.add('active');
+    else if (i === idx - 1) el.classList.add('near-prev');
+    else if (i === idx + 1) el.classList.add('near-next');
   });
   if (!userScrolling) {
-    const el = els[idx];
-    const target = el.offsetTop - (box.clientHeight/2) + (el.offsetHeight/2);
+    const el  = els[idx];
+    const target = el.offsetTop - (box.clientHeight / 2) + (el.offsetHeight / 2);
     autoScrolling = true;
-    box.scrollTo({top: Math.max(0,target), behavior:'smooth'});
-    setTimeout(() => autoScrolling=false, 600);
+    box.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+    setTimeout(() => autoScrolling = false, 700);
   }
 }
 
-// Audio
+// ── Audio ──────────────────────────────────────────────────────
 const audio     = document.getElementById('audio');
 const seekFill  = document.getElementById('seekFill');
 const seekThumb = document.getElementById('seekThumb');
@@ -219,54 +285,55 @@ const durEl     = document.getElementById('dur');
 const status    = document.getElementById('status');
 const iPlay     = document.getElementById('ico-play');
 const iPause    = document.getElementById('ico-pause');
-audio.volume = 0.9;
+audio.volume    = 0.9;
 
-function fmt(s) { s=Math.max(0,s||0); return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0'); }
-function setBar(f,th,pct) { f.style.width=pct+'%'; th.style.left=pct+'%'; }
+function fmt(s) { s = Math.max(0, s || 0); return Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0'); }
+function setBar(f, th, pct) { f.style.width = pct + '%'; th.style.left = pct + '%'; }
 
-audio.addEventListener('loadedmetadata', () => durEl.textContent=fmt(audio.duration));
+audio.addEventListener('loadedmetadata', () => durEl.textContent = fmt(audio.duration));
 audio.addEventListener('timeupdate', () => {
   if (!audio.duration) return;
-  setBar(seekFill, seekThumb, (audio.currentTime/audio.duration)*100);
+  setBar(seekFill, seekThumb, (audio.currentTime / audio.duration) * 100);
   curEl.textContent = fmt(audio.currentTime);
   updateLyrics(audio.currentTime);
 });
 audio.addEventListener('ended', () => {
-  iPlay.style.display=''; iPause.style.display='none';
-  status.textContent='Finished'; status.className='status';
-  setBar(seekFill,seekThumb,0); curEl.textContent='0:00';
-  lastIdx=-1; box.scrollTo({top:0,behavior:'smooth'});
+  iPlay.style.display = ''; iPause.style.display = 'none';
+  status.textContent = 'Finished ✓'; status.className = 'status';
+  setBar(seekFill, seekThumb, 0); curEl.textContent = '0:00';
+  lastIdx = -1; box.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
 function togglePlay() {
   if (audio.paused) {
     audio.play();
-    iPlay.style.display='none'; iPause.style.display='';
-    status.textContent='▶ Now playing…'; status.className='status playing';
+    iPlay.style.display = 'none'; iPause.style.display = '';
+    status.textContent = 'Now playing'; status.className = 'status playing';
   } else {
     audio.pause();
-    iPlay.style.display=''; iPause.style.display='none';
-    status.textContent='Paused'; status.className='status';
+    iPlay.style.display = ''; iPause.style.display = 'none';
+    status.textContent = 'Paused'; status.className = 'status';
   }
 }
 
-function makeDraggable(trackEl, onDrag) {
-  function getX(e) { return e.touches ? e.touches[0].clientX : e.clientX; }
-  function calc(e) { const r=trackEl.getBoundingClientRect(); return Math.max(0,Math.min(1,(getX(e)-r.left)/r.width)); }
-  let active=false;
-  trackEl.addEventListener('mousedown',  e=>{active=true;onDrag(calc(e));e.preventDefault();});
-  trackEl.addEventListener('touchstart', e=>{active=true;onDrag(calc(e));},{passive:true});
-  document.addEventListener('mousemove', e=>{if(active){onDrag(calc(e));e.preventDefault();}},{passive:false});
-  document.addEventListener('touchmove', e=>{if(active){onDrag(calc(e));e.preventDefault();}},{passive:false});
-  document.addEventListener('mouseup',  ()=>active=false);
-  document.addEventListener('touchend', ()=>active=false);
+// ── Drag helper ────────────────────────────────────────────────
+function makeDraggable(el, cb) {
+  const getX = e => e.touches ? e.touches[0].clientX : e.clientX;
+  const calc = e => { const r = el.getBoundingClientRect(); return Math.max(0, Math.min(1, (getX(e) - r.left) / r.width)); };
+  let on = false;
+  el.addEventListener('mousedown',  e => { on = true; cb(calc(e)); e.preventDefault(); });
+  el.addEventListener('touchstart', e => { on = true; cb(calc(e)); }, { passive: true });
+  document.addEventListener('mousemove', e => { if (on) { cb(calc(e)); e.preventDefault(); } }, { passive: false });
+  document.addEventListener('touchmove', e => { if (on) { cb(calc(e)); e.preventDefault(); } }, { passive: false });
+  document.addEventListener('mouseup',   () => on = false);
+  document.addEventListener('touchend',  () => on = false);
 }
 
-makeDraggable(document.getElementById('seekTrack'), pct => {
-  if (audio.duration) { audio.currentTime=pct*audio.duration; setBar(seekFill,seekThumb,pct*100); updateLyrics(pct*audio.duration); }
+makeDraggable(document.getElementById('seekTrack'), p => {
+  if (audio.duration) { audio.currentTime = p * audio.duration; setBar(seekFill, seekThumb, p * 100); updateLyrics(p * audio.duration); }
 });
-makeDraggable(document.getElementById('volTrack'), pct => {
-  audio.volume=pct; setBar(volFill,volThumb,pct*100);
+makeDraggable(document.getElementById('volTrack'), p => {
+  audio.volume = p; setBar(volFill, volThumb, p * 100);
 });
 </script>
 </body>
