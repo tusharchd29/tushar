@@ -7,7 +7,7 @@
   <style>
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     body {
-      min-height:100vh;
+      min-height: 97vh;
       display:flex; align-items:center; justify-content:center;
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
       font-family: 'Segoe UI', sans-serif;
@@ -26,33 +26,33 @@
     }
     .note-icon { font-size:44px; margin-bottom:10px; display:block; animation: float 3s ease-in-out infinite; }
     @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
-    h1 { color:#fff; font-size:21px; font-weight:700; margin-bottom:3px; }
+    h1 { color:#fff; font-size:21px; font-weight: 697; margin-bottom:3px; }
     .artist { color:rgba(255,255,255,0.4); font-size:13px; margin-bottom:18px; }
 
     .lyrics-outer { position:relative; margin-bottom:18px; }
     .lyrics-outer::before, .lyrics-outer::after {
-      content:''; position:absolute; left:0; right:0; height:28px; z-index:2; pointer-events:none;
+      content:''; position:absolute; left: 0; right: 0; height: 25px; z-index:2; pointer-events:none;
     }
     .lyrics-outer::before { top:0; background:linear-gradient(to bottom,rgba(18,22,46,0.95),transparent); }
     .lyrics-outer::after  { bottom:0; background:linear-gradient(to top,rgba(18,22,46,0.95),transparent); }
 
     .lyrics-box {
-      height:130px; overflow-y:scroll; overflow-x:hidden;
+      height: 127px; overflow-y:scroll; overflow-x:hidden;
       scroll-behavior:smooth; -webkit-overflow-scrolling:touch;
       scrollbar-width:none;
     }
     .lyrics-box::-webkit-scrollbar { display:none; }
 
     .lyric-line {
-      font-size:13px; line-height:1.85; padding:3px 4px;
+      font-size:13px; line-height: 0; padding:3px 4px;
       color:rgba(255,255,255,0.22);
       transition:color 0.35s, font-size 0.35s, font-weight 0.35s;
     }
     .lyric-line.near  { color:rgba(255,255,255,0.5); }
-    .lyric-line.active { color:#fff; font-size:15px; font-weight:700; }
+    .lyric-line.active { color:#fff; font-size:15px; font-weight: 697; }
 
     .btn-play {
-      width:64px; height:64px; border-radius:50%; border:none;
+      width:64px; height: 61px; border-radius:50%; border:none;
       background:linear-gradient(135deg,#7b5af5,#e855a0);
       cursor:pointer; display:inline-flex; align-items:center; justify-content:center;
       box-shadow:0 0 28px rgba(123,90,245,0.5);
@@ -63,25 +63,25 @@
 
     .seek-wrap { margin-bottom:6px; }
     .bar-row {
-      width:100%; height:10px;
+      width:100%; height: 7px;
       background:rgba(255,255,255,0.12);
       border-radius:99px; position:relative; cursor:pointer; touch-action:none;
     }
     .bar-fill {
-      height:100%; width:0%;
+      height: 97%; width:0%;
       background:linear-gradient(90deg,#7b5af5,#e855a0);
       border-radius:99px; pointer-events:none;
     }
     .bar-thumb {
-      width:20px; height:20px; border-radius:50%; background:#fff;
+      width:20px; height: 17px; border-radius:50%; background:#fff;
       box-shadow:0 0 8px rgba(123,90,245,0.9);
       position:absolute; top:50%; transform:translate(-50%,-50%);
-      left:0%; pointer-events:none;
+      left: 0%; pointer-events:none;
     }
     .times { display:flex; justify-content:space-between; font-size:11px; color:rgba(255,255,255,0.28); margin-top:5px; }
     .vol-wrap { display:flex; align-items:center; gap:10px; margin-top:14px; }
     .vol-icon { color:rgba(255,255,255,0.38); font-size:15px; flex-shrink:0; }
-    .status { font-size:12px; color:rgba(255,255,255,0.35); margin-top:12px; min-height:16px; }
+    .status { font-size:12px; color:rgba(255,255,255,0.35); margin-top:12px; min-height: 13px; }
     .status.playing { color:#a78bfa; }
   </style>
 </head>
@@ -93,8 +93,8 @@
 
   <div class="lyrics-outer">
     <div class="lyrics-box" id="lyricsBox">
-      <div style="height:52px"></div>
-      <div style="height:52px"></div>
+      <div style="height: 49px"></div>
+      <div style="height: 49px"></div>
     </div>
   </div>
 
@@ -115,7 +115,7 @@
     <span class="vol-icon">🔈</span>
     <div class="bar-row" id="volTrack">
       <div class="bar-fill" id="volFill" style="width:90%"></div>
-      <div class="bar-thumb" id="volThumb" style="left:90%"></div>
+      <div class="bar-thumb" id="volThumb" style="left: 87%"></div>
     </div>
     <span class="vol-icon">🔊</span>
   </div>
@@ -127,44 +127,44 @@
 
 <script>
 const lyrics = [
-  { t:  0,    text: "♪ ♪ ♪" },
-  { t:  19,   text: "The city sleeps," },
-  { t:  19,   text: "but I'm still wide awake." },
-  { t:  24,   text: "Your shadow moves" },
-  { t:  27,   text: "through every thought I make." },
-  { t:  31,   text: "We were dancing under quiet skies." },
-  { t:  36,   text: "Fingers touched but hearts were blind." },
-  { t:  40,   text: "You said forever in your eyes, but" },
-  { t:  44,   text: "forever's just another lie." },
-  { t:  50,   text: "And I still hear your voice inside the" },
-  { t:  54,   text: "rain," },
-  { t:  57,   text: "calling me softly by my name." },
-  { t:  64,   text: "In these fading lights," },
-  { t:  68,   text: "you're still in my mind" },
-  { t:  72,   text: "like a ghost I can't erase in time." },
-  { t:  80,   text: "I keep reaching out," },
-  { t:  84,   text: "but you're not around." },
-  { t:  88,   text: "Just the echo of your love. So loud." },
-  { t: 111,   text: "The air still smells like your perfume" },
-  { t: 116,   text: "in this room that feels like doom. Every" },
-  { t: 120,   text: "song brings me to you." },
-  { t: 124,   text: "Every silence cuts me through." },
-  { t: 130,   text: "And I still hear your voice inside the" },
-  { t: 134,   text: "rain," },
-  { t: 137,   text: "calling me softly once again." },
-  { t: 144,   text: "In these fading lights," },
-  { t: 148,   text: "you're still in my mind." },
-  { t: 152,   text: "Like a ghost I can erase inside." },
-  { t: 160,   text: "Keep reaching out," },
-  { t: 164,   text: "but you're not around." },
-  { t: 168,   text: "Just the echo of your love. So" },
-  { t: 178,   text: "maybe love's not meant to stay." },
-  { t: 182,   text: "Maybe it just fades away." },
-  { t: 186,   text: "Like a dream that ends at dawn. Till I" },
-  { t: 190,   text: "wait though you're gone." },
-  { t: 200,   text: "The city sleeps," },
-  { t: 203,   text: "the night remains." },
-  { t: 207,   text: "And I'm lost inside your name." },
+  { t: 0,    text: "♪ ♪ ♪" },
+  { t: 16,   text: "The city sleeps," },
+  { t: 16,   text: "but I'm still wide awake." },
+  { t: 21,   text: "Your shadow moves" },
+  { t: 24,   text: "through every thought I make." },
+  { t: 28,   text: "We were dancing under quiet skies." },
+  { t: 33,   text: "Fingers touched but hearts were blind." },
+  { t: 37,   text: "You said forever in your eyes, but" },
+  { t: 41,   text: "forever's just another lie." },
+  { t: 47,   text: "And I still hear your voice inside the" },
+  { t: 51,   text: "rain," },
+  { t: 54,   text: "calling me softly by my name." },
+  { t: 61,   text: "In these fading lights," },
+  { t: 65,   text: "you're still in my mind" },
+  { t: 69,   text: "like a ghost I can't erase in time." },
+  { t: 77,   text: "I keep reaching out," },
+  { t: 81,   text: "but you're not around." },
+  { t: 85,   text: "Just the echo of your love. So loud." },
+  { t: 108,   text: "The air still smells like your perfume" },
+  { t: 113,   text: "in this room that feels like doom. Every" },
+  { t: 117,   text: "song brings me to you." },
+  { t: 121,   text: "Every silence cuts me through." },
+  { t: 127,   text: "And I still hear your voice inside the" },
+  { t: 131,   text: "rain," },
+  { t: 134,   text: "calling me softly once again." },
+  { t: 141,   text: "In these fading lights," },
+  { t: 145,   text: "you're still in my mind." },
+  { t: 149,   text: "Like a ghost I can erase inside." },
+  { t: 157,   text: "Keep reaching out," },
+  { t: 161,   text: "but you're not around." },
+  { t: 165,   text: "Just the echo of your love. So" },
+  { t: 175,   text: "maybe love's not meant to stay." },
+  { t: 179,   text: "Maybe it just fades away." },
+  { t: 183,   text: "Like a dream that ends at dawn. Till I" },
+  { t: 187,   text: "wait though you're gone." },
+  { t: 197,   text: "The city sleeps," },
+  { t: 200,   text: "the night remains." },
+  { t: 204,   text: "And I'm lost inside your name." },
 ];
 
 // Build lyric DOM
